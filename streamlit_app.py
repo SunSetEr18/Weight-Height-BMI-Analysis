@@ -3,14 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Set page config
 st.set_page_config(
     page_title="Height & Weight Analysis",
     page_icon="📊",
     layout="wide"
 )
 
-# Load data function with caching
 @st.cache_data
 def load_data():
     return pd.read_csv("data/SOCR-HeightWeight_metric.csv")
@@ -19,14 +17,11 @@ def main():
     st.title("📊 Height and Weight Analysis")
     st.markdown("Analyzing the relationship between height and weight in metric units")
     
-    # Load data
     df = load_data()
     
-    # Show raw data
     with st.expander("View Raw Data"):
         st.dataframe(df)
     
-    # Basic statistics
     st.subheader("Basic Statistics")
     col1, col2 = st.columns(2)
     
@@ -40,16 +35,13 @@ def main():
         st.metric("Minimum Weight", f"{df['Weight(kg)'].min():.1f} kg")
         st.metric("Maximum Weight", f"{df['Weight(kg)'].max():.1f} kg")
     
-    # Visualization
     st.subheader("Data Visualization")
     
-    # Scatter plot
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.scatterplot(data=df, x='Height(cm)', y='Weight(kg)', alpha=0.6, ax=ax)
     ax.set_title("Height vs Weight")
     st.pyplot(fig)
     
-    # Distribution plots
     col1, col2 = st.columns(2)
     
     with col1:
@@ -64,11 +56,9 @@ def main():
         ax2.set_title("Weight Distribution")
         st.pyplot(fig2)
     
-    # BMI calculation and analysis
     st.subheader("BMI Analysis")
     df['BMI'] = df['Weight(kg)'] / (df['Height(cm)']/100)**2
     
-    # BMI categories
     def get_bmi_category(bmi):
         if bmi < 18.5:
             return "Underweight"
@@ -81,18 +71,15 @@ def main():
     
     df['BMI Category'] = df['BMI'].apply(get_bmi_category)
     
-    # BMI distribution
     fig3, ax3 = plt.subplots(figsize=(10, 5))
     sns.histplot(df['BMI'], kde=True, bins=30, ax=ax3)
     ax3.set_title("BMI Distribution")
     st.pyplot(fig3)
     
-    # BMI category counts
     st.write("BMI Category Distribution:")
     bmi_counts = df['BMI Category'].value_counts()
     st.bar_chart(bmi_counts)
     
-    # Correlation analysis
     st.subheader("Correlation Analysis")
     corr = df[['Height(cm)', 'Weight(kg)', 'BMI']].corr()
     
